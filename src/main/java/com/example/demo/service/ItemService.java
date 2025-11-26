@@ -1,20 +1,24 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ItemDto;
+import com.example.demo.dto.request.ItemCreateRequest;
+import com.example.demo.dto.request.ItemUpdateRequest;
+import com.example.demo.dto.response.ItemResponse;
 import com.example.demo.dto.response.MessageResponse;
 
 import java.util.List;
 
 public interface ItemService {
-    ItemDto createItem(Long userId, ItemDto item);
+    ItemResponse createItem(Long userId, ItemCreateRequest item);
 
-    ItemDto updateItem(Long userId, Long itemId, ItemDto item);
+    ItemResponse updateItem(Long userId, Long itemId, ItemUpdateRequest item);
 
     MessageResponse deleteItem(Long userId, Long itemId);
 
-    ItemDto getItem(Long id);
+    ItemResponse getItem(Long id);
 
-    List<ItemDto> getUserItems(Long userId);
+    List<ItemResponse> getUserItems(Long userId);
+
+    List<ItemResponse> getItemsByName( String name);
 
     //todo сделать поиск elastic search
 }

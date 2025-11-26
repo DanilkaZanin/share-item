@@ -1,8 +1,11 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.ItemDto;
+import com.example.demo.dto.request.ItemCreateRequest;
+import com.example.demo.dto.request.ItemUpdateRequest;
+import com.example.demo.dto.response.ItemResponse;
 import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.entity.Item;
+import com.example.demo.entity.ItemStatus;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ItemNotFoundException;
 import com.example.demo.mapper.ItemMapper;
@@ -28,22 +31,24 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
     ItemMapper itemMapper;
 
     @Override
-    public ItemDto createItem(Long userId, ItemDto itemDto) {
-        checkUserService.getById(userId);
-
+    public ItemResponse createItem(Long userId, ItemCreateRequest itemDto) {
+        var user = checkUserService.getById(userId);
         var item = itemMapper.toItem(itemDto);
-        item.setCreatedAt(LocalDateTime.now());
 
-        return itemMapper.toItemDto(itemRepository.save(item));
+        item.setCreatedAt(LocalDateTime.now());
+        item.setStatus(ItemStatus.AVAILABLE);
+        item.setOwner(user);
+
+        return itemMapper.toItemResponse(itemRepository.save(item));
     }
 
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
+    public ItemResponse updateItem(Long userId, Long itemId, ItemUpdateRequest itemDto) {
         checkUserService.getById(userId);
 
         var item = itemMapper.updateItem(itemDto, findItemById(itemId));
 
-        return itemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemResponse(itemRepository.save(item));
     }
 
     @Override
@@ -55,16 +60,21 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
     }
 
     @Override
-    public ItemDto getItem(Long id) {
-        return itemMapper.toItemDto(findItemById(id));
+    public ItemResponse getItem(Long id) {
+        return itemMapper.toItemResponse(findItemById(id));
     }
 
     @Override
-    public List<ItemDto> getUserItems(Long userId) {
+    public List<ItemResponse> getUserItems(Long userId) {
         checkUserService.getById(userId);
 
         List<Item> items = itemRepository.getItemsByOwnerId(userId);
-        return items.stream().map(itemMapper::toItemDto).toList();
+        return items.stream().map(itemMapper::toItemResponse).toList();
+    }
+
+    @Override
+    public List<ItemResponse> getItemsByName(String name) {
+        return itemRepository.getItemsByNameContaining(name);
     }
 
 

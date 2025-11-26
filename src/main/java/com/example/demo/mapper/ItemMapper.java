@@ -1,6 +1,8 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.ItemDto;
+import com.example.demo.dto.response.ItemResponse;
+import com.example.demo.dto.request.ItemCreateRequest;
+import com.example.demo.dto.request.ItemUpdateRequest;
 import com.example.demo.entity.Item;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -11,10 +13,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface ItemMapper {
 
 
-    ItemDto toItemDto(Item item);
+    ItemResponse toItemResponse(Item item);
 
-    Item toItem(ItemDto itemDto);
+
+    Item toItem(ItemCreateRequest itemCreateRequest);
+    Item toItem(ItemUpdateRequest itemUpdateRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Item updateItem(ItemDto itemDto, @MappingTarget Item item);
+    Item updateItem(ItemUpdateRequest itemUpdateRequest, @MappingTarget Item item);
 }

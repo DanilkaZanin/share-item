@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dto.request.UserCreateRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.response.UserResponse;
-import com.example.demo.dto.validation.ValidationGroups;
 import com.example.demo.service.UserService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
-            @RequestBody @Validated(ValidationGroups.Create.class) UserCreateRequest userCreateRequest
+            @RequestBody @Validated UserCreateRequest userCreateRequest
     ) {
         var userResponse = userService.createUser(userCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
@@ -33,7 +32,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
-            @RequestBody @Validated(ValidationGroups.Update.class) UserUpdateRequest userUpdateRequest
+            @RequestBody @Validated UserUpdateRequest userUpdateRequest
     ) {
         return ResponseEntity.ok(userService.updateUserProfile(id, userUpdateRequest));
     }
