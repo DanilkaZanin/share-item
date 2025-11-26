@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ItemDto;
+import com.example.demo.dto.request.ItemCreateRequest;
+import com.example.demo.dto.request.ItemUpdateRequest;
+import com.example.demo.dto.response.ItemResponse;
 import com.example.demo.dto.response.MessageResponse;
-import com.example.demo.dto.validation.ValidationGroups;
 import com.example.demo.service.ItemService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,22 +25,31 @@ public class ItemController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestHeader("X-User-Id") Long userId,
-                              @RequestBody @Validated(ValidationGroups.Create.class) ItemDto request
+    public ItemResponse createItem(@RequestHeader("X-User-Id") Long userId,
+                                   @RequestBody @Validated ItemCreateRequest request
     ) {
         return itemService.createItem(userId, request);
     }
 
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto getItem(@PathVariable Long itemId) {
+    public ItemResponse getItem(@PathVariable Long itemId) {
         return itemService.getItem(itemId);
     }
 
-    @GetMapping()
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getUserItems(@RequestHeader("X-User-Id") Long userId) {
+    public List<ItemResponse> getUserItems(@RequestHeader("X-User-Id") Long userId) {
         return itemService.getUserItems(userId);
+    }
+
+
+    @GetMapping("/search/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ItemResponse> getItemsByName(
+            @PathVariable @NotBlank String name
+    ) {
+        return itemService.getItemsByName(name);
     }
 
     @DeleteMapping("/{itemId}")
@@ -49,10 +60,10 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(
+    public ItemResponse updateItem(
             @PathVariable Long itemId,
             @RequestHeader("X-User-Id") Long userId,
-            @RequestBody @Validated(ValidationGroups.Update.class) ItemDto request
+            @RequestBody ItemUpdateRequest request
     ) {
         return itemService.updateItem(userId, itemId, request);
     }

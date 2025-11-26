@@ -24,7 +24,7 @@ public class Item {
 
     String description;
 
-    Boolean available; // юзер может запретить сдавать предметы!
+    ItemStatus status; // владелец может запретить сдавать предметы!
 
     BigDecimal pricePerDay;
 
