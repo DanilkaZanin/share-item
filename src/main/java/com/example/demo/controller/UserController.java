@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UserDto;
-import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.request.UserUpdateRequest;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.dto.validation.ValidationGroups;
 import com.example.demo.service.UserService;
 import jakarta.validation.constraints.NotNull;
@@ -22,34 +23,33 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(
-            @RequestBody @Validated(ValidationGroups.Create.class) UserDto userCreateRequest
+    public ResponseEntity<UserResponse> createUser(
+            @RequestBody @Validated(ValidationGroups.Create.class) UserCreateRequest userCreateRequest
     ) {
         var userResponse = userService.createUser(userCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(
+    public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long id,
-            @RequestBody @Validated(ValidationGroups.Update.class) UserDto userUpdateRequest
+            @RequestBody @Validated(ValidationGroups.Update.class) UserUpdateRequest userUpdateRequest
     ) {
         return ResponseEntity.ok(userService.updateUserProfile(id, userUpdateRequest));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable @NotNull Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable @NotNull Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteUser(@PathVariable @NotNull Long id) {
-        var userResponse = userService.deleteUser(id);
-        return ResponseEntity.ok(userResponse);
+    public void deleteUser(@PathVariable @NotNull Long id) {
+        userService.deleteUser(id);
     }
 }

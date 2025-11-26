@@ -1,7 +1,9 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.request.UserCreateRequest;
+import com.example.demo.dto.request.UserUpdateRequest;
 import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.exceptions.ExistsMailException;
 import com.example.demo.exceptions.UserNotFoundException;
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService, EntityService<User> {
      * При добавлении пользователя вписываем статус активности и дату время создания
      */
     @Override
-    public UserDto createUser(UserDto userCreateRequest) {
+    public UserResponse createUser(UserCreateRequest userCreateRequest) {
         log.info("Создание пользователя с мэйлом: {}", userCreateRequest.email());
 
         if (userRepository.existsByEmail(userCreateRequest.email())) {
@@ -46,27 +48,25 @@ public class UserServiceImpl implements UserService, EntityService<User> {
      * добавление дополнительных данных
      */
     @Override
-    public UserDto updateUserProfile(Long userId, UserDto userUpdateRequest) {
+    public UserResponse updateUserProfile(Long userId, UserUpdateRequest userUpdateRequest) {
         User user = findUserById(userId);
 
         return userMapper.toUserDto(userRepository.save(userMapper.updateUser(userUpdateRequest, user)));
     }
 
     @Override
-    public MessageResponse deleteUser(Long userId) {
+    public void deleteUser(Long userId) {
         User user = findUserById(userId);
-
-        userRepository.save(user);
-        return new MessageResponse("User has been deleted");
+        userRepository.delete(user);
     }
 
     @Override
-    public UserDto getUserById(Long userId) {
+    public UserResponse getUserById(Long userId) {
         return userMapper.toUserDto(findUserById(userId));
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::toUserDto).toList();
     }
 

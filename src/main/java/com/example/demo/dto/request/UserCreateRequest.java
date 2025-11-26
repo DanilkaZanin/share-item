@@ -1,23 +1,24 @@
-package com.example.demo.dto;
+package com.example.demo.dto.request;
 
-import com.example.demo.dto.validation.ValidationGroups;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UserDto(
-        @NotBlank(groups = ValidationGroups.Create.class)
+public record UserCreateRequest(
+        @NotBlank
         @Size(min = 2, max = 10)
         String name,
 
-        @NotBlank(groups = ValidationGroups.Create.class)
+        @NotBlank
         @Size(min = 2, max = 10)
         String password,
 
+        @NotBlank
         @Size(max = 100)
         String description,
 
-        @NotBlank(groups = ValidationGroups.Create.class)
+        @NotBlank
         @Email
         String email
-) { }
+) {
+}
