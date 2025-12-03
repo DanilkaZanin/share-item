@@ -95,6 +95,6 @@ public class BookingController {
     public List<BookingResponse> getOwnersBookings(
             @RequestHeader("X-User-Id") Long userId
     ) {
-        return null;
+        return bookingService.getOwnersBookings(userId);
     }
 }
