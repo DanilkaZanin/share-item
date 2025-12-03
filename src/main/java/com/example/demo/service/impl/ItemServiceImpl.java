@@ -7,7 +7,7 @@ import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.entity.Item;
 import com.example.demo.entity.ItemStatus;
 import com.example.demo.entity.User;
-import com.example.demo.exceptions.ItemNotFoundException;
+import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.mapper.ItemMapper;
 import com.example.demo.repository.ItemRepository;
 import com.example.demo.service.EntityService;

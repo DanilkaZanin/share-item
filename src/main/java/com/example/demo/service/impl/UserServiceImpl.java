@@ -2,11 +2,10 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.request.UserCreateRequest;
 import com.example.demo.dto.request.UserUpdateRequest;
-import com.example.demo.dto.response.MessageResponse;
 import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
-import com.example.demo.exceptions.ExistsMailException;
-import com.example.demo.exceptions.UserNotFoundException;
+import com.example.demo.exception.ExistsMailException;
+import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EntityService;
