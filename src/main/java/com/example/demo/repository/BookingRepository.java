@@ -1,7 +1,7 @@
 package com.example.demo.repository;
 
-import com.example.demo.dto.BookingResponse;
-import com.example.demo.dto.response.BookingRequest;
+import com.example.demo.dto.request.BookingRequest;
+import com.example.demo.dto.response.BookingResponse;
 import com.example.demo.entity.Booking;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

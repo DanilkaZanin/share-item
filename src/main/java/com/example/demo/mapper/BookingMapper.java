@@ -1,18 +1,18 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.BookingResponse;
-import com.example.demo.dto.response.BookingRequest;
+import com.example.demo.dto.request.BookingRequest;
+import com.example.demo.dto.response.BookingResponse;
 import com.example.demo.entity.Booking;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface BookingMapper {
 
     Booking toBooking(BookingRequest bookingRequest);
     BookingRequest toRequest(Booking booking);
+
+    @Mapping(target = "itemId", source ="item.id")
+    @Mapping(target = "bookerId", source = "booker.id")
     BookingResponse toResponse(Booking booking);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

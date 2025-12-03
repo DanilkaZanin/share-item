@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Сущность будет описывать транзакцию (передачу) предмета на определённое время
@@ -22,9 +23,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    LocalDate createdAt;
+    LocalDateTime createdAt;
 
-    LocalDate verifiedAt; // когда владелец предмета подтверждает или опровергает статус бронирования
+    LocalDateTime verifiedAt; // когда владелец предмета подтверждает или опровергает статус бронирования
 
     LocalDate startDate;
 

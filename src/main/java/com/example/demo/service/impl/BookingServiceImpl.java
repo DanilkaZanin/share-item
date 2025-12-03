@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.BookingResponse;
-import com.example.demo.dto.response.BookingRequest;
+import com.example.demo.dto.request.BookingRequest;
+import com.example.demo.dto.response.BookingResponse;
 import com.example.demo.entity.Booking;
 import com.example.demo.entity.Item;
 import com.example.demo.entity.Status;
@@ -17,7 +17,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,11 +38,14 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse createBooking(Long userId, BookingRequest bookingRequest) {
         var user = checkUserService.getById(userId);
         var item = checkItemService.getById(bookingRequest.itemId());
+
         checkOverlapping(Optional.empty(), bookingRequest.itemId(), bookingRequest);
 
         var booking = bookingMapper.toBooking(bookingRequest);
+        booking.setCreatedAt(LocalDateTime.now());
         booking.setBooker(user);
         booking.setItem(item);
+        booking.setStatus(Status.WAITING);
 
         return bookingMapper.toResponse(bookingRepository.save(booking));
     }
@@ -53,6 +58,7 @@ public class BookingServiceImpl implements BookingService {
         checkOwnerAccess(user, booking);
 
         booking.setStatus(newStatus);
+        booking.setVerifiedAt(LocalDateTime.now());
         return bookingMapper.toResponse(bookingRepository.save(booking));
     }
 
@@ -65,6 +71,10 @@ public class BookingServiceImpl implements BookingService {
 
         booking.setStartDate(bookingRequest.startDate());
         booking.setEndDate(bookingRequest.endDate());
+
+        //после изменения объекта сбрасывается его статус и время верификации
+        booking.setVerifiedAt(null);
+        booking.setStatus(Status.WAITING);
 
         return bookingMapper.toResponse(bookingRepository.save(booking));
     }
@@ -80,10 +90,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingResponse getBooking(Long userId, Long bookingId) {
         var user = checkUserService.getById(userId);
         var booking = getBooking(bookingId);
 
+        //нужно как-то подгружать id юзера и овнера
         checkBookerOrOwnerAccess(user, booking);
 
         return bookingMapper.toResponse(booking);
@@ -103,17 +115,20 @@ public class BookingServiceImpl implements BookingService {
 
     //проверка что юзер, это человек который бронирует
     private void checkBookerAccess(User user, Booking booking) {
-        if (!booking.getBooker().equals(user))
+        if (!booking.getBooker().getId().equals(user.getId()))
             throw new AccessDeniedException("Access denied, user with id %s is not booker".formatted(user.getId()));
     }
 
     private void checkOwnerAccess(User user, Booking booking) {
-        if (!booking.getItem().getOwner().equals(user))
+        if (!booking.getItem().getOwner().getId().equals(user.getId()))
             throw new AccessDeniedException("Access denied, user with id %s is not owner".formatted(user.getId()));
     }
 
     private void checkBookerOrOwnerAccess(User user, Booking booking) {
-        if (!booking.getBooker().equals(user) || !booking.getItem().getOwner().equals(user))
+        boolean isBooker = booking.getBooker().getId().equals(user.getId());
+        boolean isOwner = booking.getItem().getOwner().getId().equals(user.getId());
+
+        if (!isBooker && !isOwner)
             throw new AccessDeniedException("Access denied, user with id %s is not owner or booker".formatted(user.getId()));
     }
 

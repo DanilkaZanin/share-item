@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.BookingResponse;
-import com.example.demo.dto.response.BookingRequest;
+import com.example.demo.dto.request.BookingRequest;
+import com.example.demo.dto.response.BookingResponse;
 import com.example.demo.entity.Status;
 import jakarta.validation.constraints.NotNull;
 

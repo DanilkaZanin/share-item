@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.BookingResponse;
-import com.example.demo.dto.response.BookingRequest;
-import com.example.demo.entity.Status;
+import com.example.demo.dto.request.BookingRequest;
+import com.example.demo.dto.request.UpdateStatusBookingRequest;
+import com.example.demo.dto.response.BookingResponse;
 import com.example.demo.service.BookingService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** В букингах мы должны
+/**
+ * В букингах мы должны
  * 1) создавать запрос на бронирование
  * 2) подтверждать/отклонять бронирование
  * 3) изменять даты бронирования
  * 4) забирать все бронирования вещи
  * 6) забирать конкретную бронь
- * */
+ */
 @RestController
 @RequestMapping("bookings")
 @Validated
@@ -29,7 +30,7 @@ public class BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingResponse createBooking(
-            @RequestHeader("X-User-Id") Long userId,
+            @RequestHeader("X-User-Id") @NotNull Long userId,
             @RequestBody @Validated BookingRequest bookingRequest
     ) {
         return bookingService.createBooking(userId, bookingRequest);
@@ -38,7 +39,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
     public BookingResponse updateBookingDates(
-            @RequestHeader("X-User-Id") Long userId,
+            @RequestHeader("X-User-Id") @NotNull Long userId,
             @PathVariable @NotNull Long bookingId,
             @RequestBody @Validated BookingRequest bookingRequest
     ) {
@@ -47,10 +48,11 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}/status")
     public BookingResponse updateBookingStatus(
-            @RequestHeader("X-User-Id") Long userId,
-            @PathVariable Long bookingId,
-            @RequestParam Status newStatus) {
-        return bookingService.updateStatus(userId, bookingId, newStatus);
+            @RequestHeader("X-User-Id") @NotNull Long userId,
+            @PathVariable @NotNull Long bookingId,
+            @RequestBody UpdateStatusBookingRequest status
+    ) {
+        return bookingService.updateStatus(userId, bookingId, status.status());
     }
 
     @DeleteMapping("{bookingId}")
@@ -79,11 +81,20 @@ public class BookingController {
         return bookingService.getUserBookings(userId);
     }
 
-    @GetMapping("/owner")
+    @GetMapping("/owners")
     @ResponseStatus(HttpStatus.OK)
     public List<BookingResponse> getOwnersBooking(
             @RequestHeader("X-User-Id") Long userId
     ) {
         return bookingService.getOwnersBookings(userId);
+    }
+
+    // букинги, которые нуждаются в вашем подтверждении
+    @GetMapping("/owners/wait-to-werify")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BookingResponse> getOwnersBookings(
+            @RequestHeader("X-User-Id") Long userId
+    ) {
+        return null;
     }
 }
