@@ -84,6 +84,6 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
 
     @Override
     public Item getById(Long id) {
-        return null;
+        return findItemById(id);
     }
 }

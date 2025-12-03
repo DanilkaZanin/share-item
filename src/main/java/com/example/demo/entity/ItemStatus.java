@@ -1,5 +1,5 @@
 package com.example.demo.entity;
 
 public enum ItemStatus {
-    AVAILABLE, UNAVALIABLE
+    AVAILABLE, UNAVAILABLE
 }

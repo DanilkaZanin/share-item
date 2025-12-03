@@ -43,7 +43,6 @@ public class ItemController {
         return itemService.getUserItems(userId);
     }
 
-
     @GetMapping("/search/{name}")
     @ResponseStatus(HttpStatus.OK)
     public List<ItemResponse> getItemsByName(
