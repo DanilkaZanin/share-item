@@ -36,7 +36,7 @@ public class BookingController {
         return bookingService.createBooking(userId, bookingRequest);
     }
 
-    @PatchMapping("/{bookingId}")
+    @PutMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.OK)
     public BookingResponse updateBookingDates(
             @RequestHeader("X-User-Id") @NotNull Long userId,
@@ -46,7 +46,7 @@ public class BookingController {
         return bookingService.updateBookingDates(userId, bookingId, bookingRequest);
     }
 
-    @PatchMapping("/{bookingId}/status")
+    @PutMapping("/{bookingId}/status")
     public BookingResponse updateBookingStatus(
             @RequestHeader("X-User-Id") @NotNull Long userId,
             @PathVariable @NotNull Long bookingId,

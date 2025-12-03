@@ -57,7 +57,7 @@ public class ItemController {
         return itemService.deleteItem(userId, itemId);
     }
 
-    @PatchMapping("/{itemId}")
+    @PutMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
     public ItemResponse updateItem(
             @PathVariable Long itemId,
