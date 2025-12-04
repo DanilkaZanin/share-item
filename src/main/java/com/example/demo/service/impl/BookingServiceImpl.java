@@ -26,7 +26,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class BookingServiceImpl implements BookingService {
+public class BookingServiceImpl implements BookingService, EntityService<Booking> {
     BookingRepository bookingRepository;
 
     EntityService<Item> checkItemService;
@@ -111,6 +111,11 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingResponse> getOwnersBookings(Long userId) {
         var user = checkUserService.getById(userId);
         return bookingRepository.getBookingsByItem_Owner(user);
+    }
+
+    @Override
+    public Booking getById(Long id) {
+        return getBooking(id);
     }
 
     //проверка что юзер, это человек который бронирует

@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.request.ItemCreateRequest;
 import com.example.demo.dto.request.ItemUpdateRequest;
+import com.example.demo.dto.response.CommentResponse;
 import com.example.demo.dto.response.ItemResponse;
 import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.service.CommentService;
 import com.example.demo.service.ItemService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -22,6 +24,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ItemController {
     ItemService itemService;
+    CommentService commentService;
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,5 +68,11 @@ public class ItemController {
             @RequestBody ItemUpdateRequest request
     ) {
         return itemService.updateItem(userId, itemId, request);
+    }
+
+    @GetMapping("/{itemId}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentResponse> getComments(@PathVariable Long itemId) {
+        return commentService.getComments(itemId);
     }
 }
