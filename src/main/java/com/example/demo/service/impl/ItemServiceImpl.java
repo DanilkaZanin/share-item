@@ -9,6 +9,7 @@ import com.example.demo.entity.ItemStatus;
 import com.example.demo.entity.User;
 import com.example.demo.exception.ItemNotFoundException;
 import com.example.demo.mapper.ItemMapper;
+import com.example.demo.message.MessageHelper;
 import com.example.demo.repository.ItemRepository;
 import com.example.demo.service.EntityService;
 import com.example.demo.service.ItemService;
@@ -29,6 +30,8 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
     EntityService<User> checkUserService;
 
     ItemMapper itemMapper;
+
+    MessageHelper messageHelper;
 
     @Override
     public ItemResponse createItem(Long userId, ItemCreateRequest itemDto) {
@@ -56,7 +59,7 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
         checkUserService.getById(userId);
 
         itemRepository.deleteById(itemId);
-        return new MessageResponse("Item deleted successfully");
+        return new MessageResponse(messageHelper.get("item.deleted"));
     }
 
     @Override
@@ -79,7 +82,9 @@ public class ItemServiceImpl implements ItemService, EntityService<Item> {
 
 
     private Item findItemById(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException("Item with id : " + itemId + " not found"));
+        return itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(
+                messageHelper.get("item.not.found.exception", itemId))
+        );
     }
 
     @Override

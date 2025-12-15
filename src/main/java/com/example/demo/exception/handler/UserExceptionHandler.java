@@ -19,14 +19,17 @@ public class UserExceptionHandler {
     @ExceptionHandler(ExistsMailException.class)
     public ErrorResponse handleExistingMail(ExistsMailException exception) {
         log.info("Вызван метод handleExistingMail для мэйла: {}", exception.getMessage());
-        return new ErrorResponse("Мэйл %s уже существует".formatted(exception.getMessage()), LocalDateTime.now());
+        return new ErrorResponse(
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound(UserNotFoundException exception) {
         return new ErrorResponse(
-                "Пользователя с id: %s не удалось найти".formatted(exception.getMessage()),
+                exception.getMessage(),
                 LocalDateTime.now()
         );
     }

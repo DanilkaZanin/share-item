@@ -7,10 +7,13 @@ import com.example.demo.entity.User;
 import com.example.demo.exception.ExistsMailException;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.message.MessageHelper;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EntityService;
 import com.example.demo.service.UserService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +23,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService, EntityService<User> {
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    UserRepository userRepository;
+    UserMapper userMapper;
+    MessageHelper messageHelper;
 
     /**
      * При добавлении пользователя вписываем статус активности и дату время создания
@@ -33,7 +38,9 @@ public class UserServiceImpl implements UserService, EntityService<User> {
 
         if (userRepository.existsByEmail(userCreateRequest.email())) {
             log.warn("Попытка создать пользователя с существующем мэйлом! {}", userCreateRequest.email());
-            throw new ExistsMailException(userCreateRequest.email());
+            throw new ExistsMailException(
+                    messageHelper.get("user.exists.mail.exception", userCreateRequest.email())
+            );
         }
 
         User user = userMapper.toUser(userCreateRequest);
@@ -75,6 +82,8 @@ public class UserServiceImpl implements UserService, EntityService<User> {
     }
 
     private User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id.toString()));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
+                messageHelper.get("user.not.found.exception", id))
+        );
     }
 }
