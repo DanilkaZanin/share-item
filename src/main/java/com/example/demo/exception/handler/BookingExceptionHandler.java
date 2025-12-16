@@ -17,7 +17,7 @@ public class BookingExceptionHandler {
     @ExceptionHandler(BookingNotFoundException.class)
     public ErrorResponse handleBookingNotFound(BookingNotFoundException exception) {
         return new ErrorResponse(
-                "Бронирование с id: %s не удалось найти".formatted(exception.getMessage()),
+                exception.getMessage(),
                 LocalDateTime.now()
         );
     }
@@ -26,7 +26,7 @@ public class BookingExceptionHandler {
     @ExceptionHandler(DateConflictException.class)
     public ErrorResponse handleDateConflict(DateConflictException exception) {
         return new ErrorResponse(
-                "Время %s пересекается с другими бронированиями".formatted(exception.getMessage()),
+                exception.getMessage(),
                 LocalDateTime.now()
         );
     }

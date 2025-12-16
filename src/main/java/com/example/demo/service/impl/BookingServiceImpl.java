@@ -10,6 +10,7 @@ import com.example.demo.exception.AccessDeniedException;
 import com.example.demo.exception.BookingNotFoundException;
 import com.example.demo.exception.DateConflictException;
 import com.example.demo.mapper.BookingMapper;
+import com.example.demo.message.MessageHelper;
 import com.example.demo.repository.BookingRepository;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.EntityService;
@@ -33,6 +34,7 @@ public class BookingServiceImpl implements BookingService, EntityService<Booking
     EntityService<User> checkUserService;
 
     BookingMapper bookingMapper;
+    MessageHelper messageHelper;
 
     @Override
     public BookingResponse createBooking(Long userId, BookingRequest bookingRequest) {
@@ -121,12 +123,16 @@ public class BookingServiceImpl implements BookingService, EntityService<Booking
     //проверка что юзер, это человек который бронирует
     private void checkBookerAccess(User user, Booking booking) {
         if (!booking.getBooker().getId().equals(user.getId()))
-            throw new AccessDeniedException("Access denied, user with id %s is not booker".formatted(user.getId()));
+            throw new AccessDeniedException(
+                    messageHelper.get("booking.access.denied.booker.exception", user.getId())
+            );
     }
 
     private void checkOwnerAccess(User user, Booking booking) {
         if (!booking.getItem().getOwner().getId().equals(user.getId()))
-            throw new AccessDeniedException("Access denied, user with id %s is not owner".formatted(user.getId()));
+            throw new AccessDeniedException(
+                    messageHelper.get("booking.access.denied.owner.exception", user.getId())
+            );
     }
 
     private void checkBookerOrOwnerAccess(User user, Booking booking) {
@@ -134,7 +140,9 @@ public class BookingServiceImpl implements BookingService, EntityService<Booking
         boolean isOwner = booking.getItem().getOwner().getId().equals(user.getId());
 
         if (!isBooker && !isOwner)
-            throw new AccessDeniedException("Access denied, user with id %s is not owner or booker".formatted(user.getId()));
+            throw new AccessDeniedException(
+                    messageHelper.get("booking.access.denied.owner.booker.exception", user.getId())
+            );
     }
 
     private void checkOverlapping(Optional<Long> bookingId, Long itemId, BookingRequest bookingRequest) {
@@ -145,7 +153,7 @@ public class BookingServiceImpl implements BookingService, EntityService<Booking
                         .anyMatch(booking -> isOverlapping(bookingRequest, booking)));
 
         if (isOverlapping)
-            throw new DateConflictException("Selected dates are not available");
+            throw new DateConflictException(messageHelper.get("booking.date.conflict.exception"));
     }
 
     private boolean isOverlapping(BookingRequest newBooking, BookingRequest existing) {
@@ -163,7 +171,7 @@ public class BookingServiceImpl implements BookingService, EntityService<Booking
 
     private Booking getBooking(Long id) {
         return bookingRepository.findById(id).orElseThrow(
-                () -> new BookingNotFoundException("Booking with id %s not found".formatted(id))
+                () -> new BookingNotFoundException(messageHelper.get("booking.not.found.exception", id))
         );
     }
 }

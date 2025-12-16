@@ -18,7 +18,7 @@ public class ItemExceptionHandler {
     @ExceptionHandler(ItemNotFoundException.class)
     public ErrorResponse handleUserNotFound(ItemNotFoundException exception) {
         return new ErrorResponse(
-                "Предмет с id: %s не удалось найти".formatted(exception.getMessage()),
+                exception.getMessage(),
                 LocalDateTime.now()
         );
     }

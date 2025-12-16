@@ -6,6 +6,7 @@ import com.example.demo.dto.response.UserResponse;
 import com.example.demo.entity.User;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.message.MessageHelper;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.UserInfoDetails;
 import com.example.demo.service.EntityService;
@@ -27,6 +28,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService, EntityService<User> {
     UserRepository userRepository;
     UserMapper userMapper;
+    MessageHelper messageHelper;
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -75,6 +77,8 @@ public class UserServiceImpl implements UserService, EntityService<User> {
     }
 
     private User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id.toString()));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
+                messageHelper.get("user.not.found.exception", id))
+        );
     }
 }

@@ -11,6 +11,7 @@ import com.example.demo.exception.CommentNotFoudException;
 import com.example.demo.exception.UserIsNotBookerException;
 import com.example.demo.exception.UserIsNotCommentatorException;
 import com.example.demo.mapper.CommentMapper;
+import com.example.demo.message.MessageHelper;
 import com.example.demo.repository.CommentRepository;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.EntityService;
@@ -29,6 +30,7 @@ public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
 
     CommentMapper commentMapper;
+    MessageHelper messageHelper;
 
     EntityService<Item> checkItemService;
     EntityService<User> checkUserService;
@@ -70,25 +72,27 @@ public class CommentServiceImpl implements CommentService {
 
     private void checkUserBookedItem(Item item, User user, Booking booking) {
         if (!user.getId().equals(booking.getBooker().getId()))
-            throw new UserIsNotBookerException("User %s is not booker in booker %s"
-                    .formatted(user.getId(), booking.getId())
+            throw new UserIsNotBookerException(
+                    messageHelper.get("comment.user.is.not.booker.exception",user.getId(), booking.getId())
             );
 
         if (!item.getId().equals(booking.getItem().getId()))
-            throw new BookingNotThisItemException("Item %s is not in booking %s"
-                    .formatted(item.getId(), booking.getId())
+            throw new BookingNotThisItemException(
+                    messageHelper.get("comment.item.is.not.in.booking.exception", item.getId(), booking.getId())
             );
     }
 
     private void checkUserDoComment(User user, Comment comment) {
         if (!user.getId().equals(comment.getUser().getId()))
-            throw new UserIsNotCommentatorException("User %s is not the author of comment %s"
-                    .formatted(user.getId(), comment.getId())
+            throw new UserIsNotCommentatorException(
+                    messageHelper.get("comment.user.is.not.author.exception", user.getId(), comment.getId())
             );
     }
 
     private Comment getComment(Long commentId) {
         return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoudException("Comment with id %s not found".formatted(commentId)));
+                .orElseThrow(() -> new CommentNotFoudException(
+                        messageHelper.get("comment.not.found.exception", commentId))
+                );
     }
 }
