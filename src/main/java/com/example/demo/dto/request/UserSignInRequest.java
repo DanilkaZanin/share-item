@@ -4,13 +4,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UserCreateRequest(
-        @NotBlank
-        @Email
-        String email,
-
+public record UserSignInRequest(
         @NotBlank
         @Size(min = 2, max = 10)
-        String password
-) {
-}
+        String password,
+
+        @NotBlank
+        @Email
+        String email
+) { }
