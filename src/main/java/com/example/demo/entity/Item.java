@@ -24,6 +24,8 @@ public class Item {
 
     String description;
 
+    String photoKey;
+
     ItemStatus status; // владелец может запретить сдавать предметы!
 
     BigDecimal pricePerDay;

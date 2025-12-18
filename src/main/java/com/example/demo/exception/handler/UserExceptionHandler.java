@@ -3,6 +3,8 @@ package com.example.demo.exception.handler;
 import com.example.demo.dto.response.ErrorResponse;
 import com.example.demo.exception.ExistsMailException;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.exception.UserNotOwnerException;
+import com.example.demo.exception.UserPhotoExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,24 @@ public class UserExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public ErrorResponse handleUserNotFound(UserNotFoundException exception) {
+        return new ErrorResponse(
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(UserPhotoExistException.class)
+    public ErrorResponse handleUserPhotoExistException(UserPhotoExistException exception) {
+        return new ErrorResponse(
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UserNotOwnerException.class)
+    public ErrorResponse handleUserNotOwnerException(UserNotOwnerException exception) {
         return new ErrorResponse(
                 exception.getMessage(),
                 LocalDateTime.now()
