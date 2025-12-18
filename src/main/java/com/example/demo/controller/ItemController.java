@@ -5,6 +5,7 @@ import com.example.demo.dto.request.ItemUpdateRequest;
 import com.example.demo.dto.response.CommentResponse;
 import com.example.demo.dto.response.ItemResponse;
 import com.example.demo.dto.response.MessageResponse;
+import com.example.demo.security.UserInfoDetails;
 import com.example.demo.service.CommentService;
 import com.example.demo.service.ItemService;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +30,11 @@ public class ItemController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemResponse createItem(@RequestHeader("X-User-Id") Long userId,
-                                   @RequestBody @Validated ItemCreateRequest request
+    public ItemResponse createItem(
+            @AuthenticationPrincipal UserInfoDetails user,
+            @RequestBody @Validated ItemCreateRequest request
     ) {
-        return itemService.createItem(userId, request);
+        return itemService.createItem(user.getId(), request);
     }
 
     @GetMapping("/{itemId}")
@@ -42,8 +45,8 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemResponse> getUserItems(@RequestHeader("X-User-Id") Long userId) {
-        return itemService.getUserItems(userId);
+    public List<ItemResponse> getUserItems(@AuthenticationPrincipal UserInfoDetails user) {
+        return itemService.getUserItems(user.getId());
     }
 
     @GetMapping("/search/{name}")
@@ -56,18 +59,21 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public MessageResponse deleteItem(@PathVariable Long itemId, @RequestHeader("X-User-Id") Long userId) {
-        return itemService.deleteItem(userId, itemId);
+    public MessageResponse deleteItem(
+            @PathVariable Long itemId,
+            @AuthenticationPrincipal UserInfoDetails user
+    ) {
+        return itemService.deleteItem(user.getId(), itemId);
     }
 
     @PutMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
     public ItemResponse updateItem(
             @PathVariable Long itemId,
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal UserInfoDetails user,
             @RequestBody ItemUpdateRequest request
     ) {
-        return itemService.updateItem(userId, itemId, request);
+        return itemService.updateItem(user.getId(), itemId, request);
     }
 
     @GetMapping("/{itemId}/comments")

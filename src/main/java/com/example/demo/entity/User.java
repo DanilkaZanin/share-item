@@ -34,6 +34,8 @@ public class User {
 
     LocalDateTime createdAt;
 
+    String photoKey;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "user_roles",
