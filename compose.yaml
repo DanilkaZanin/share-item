@@ -1,4 +1,16 @@
 services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z-cpuv1
     restart: always
@@ -13,3 +25,6 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+
+volumes:
+  postgres-data:
