@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои предметы - Share Item</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="items.html"><i class="fas fa-box-open"></i> Предметы</a>
+            <a href="add-item.html"><i class="fas fa-plus-circle"></i> Добавить</a>
+            <a href="my-items.html" class="active"><i class="fas fa-th-list"></i> Мои вещи</a>
+            <a href="reservations.html"><i class="fas fa-calendar-check"></i> Бронирования</a>
+            <div id="authButtons"></div>
+        </div>
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-th-list"></i> Мои предметы</h1>
+        <p>Управляйте вещами, которые вы выложили для обмена</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="my-items">Мои предметы</button>
+        <button class="tab-btn" data-tab="reserved-items">Забронированные</button>
+        <button class="tab-btn" data-tab="archived-items">Архив</button>
+    </div>
+
+    <div class="tab-content active" id="my-items">
+        <div class="items-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchMyItems" placeholder="Поиск среди моих предметов...">
+            </div>
+
+            <a href="add-item.html" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Добавить новый предмет
+            </a>
+        </div>
+
+        <div class="items-grid" id="myItemsGrid">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Загрузка ваших предметов...
+            </div>
+        </div>
+
+        <div class="no-items" id="noMyItems" style="display: none;">
+            <i class="fas fa-box-open fa-3x"></i>
+            <h3>У вас пока нет предметов</h3>
+            <p>Добавьте свой первый предмет для обмена!</p>
+            <a href="add-item.html" class="btn btn-primary">
+                <i class="fas fa-plus-circle"></i> Добавить предмет
+            </a>
+        </div>
+    </div>
+
+    <div class="tab-content" id="reserved-items">
+        <div class="reservations-table-container">
+            <table class="reservations-table">
+                <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Кто забронировал</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody id="reservedItemsTable">
+                <tr>
+                    <td colspan="6" class="loading-cell">
+                        <i class="fas fa-spinner fa-spin"></i> Загрузка бронирований...
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-content" id="archived-items">
+        <div class="no-items">
+            <i class="fas fa-archive fa-3x"></i>
+            <h3>Архив пуст</h3>
+            <p>Здесь будут отображаться завершенные обмены</p>
+        </div>
+    </div>
+</main>
+
+<!-- Модальное окно управления бронированием -->
+<div class="modal" id="manageReservationModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-calendar-alt"></i> Управление бронированием</h2>
+            <button class="modal-close" id="closeManageModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="reservation-info" id="reservationInfo">
+                <!-- Информация о бронировании будет здесь -->
+            </div>
+
+            <div class="reservation-actions" id="reservationActions">
+                <!-- Кнопки действий будут здесь -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>© 2024 ShareItem Platform. Все права защищены.</p>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/items.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        initMobileMenu();
+        updateAuthUI();
+        setupTabs();
+
+        // Проверка авторизации
+        const user = utils.checkAuth();
+        if (!user) {
+            utils.showMessage('Для просмотра ваших предметов необходимо войти в систему', 'error');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Загрузка данных
+        await loadMyItems();
+        await loadReservedItems();
+    });
+
+    function setupTabs() {
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+
+                // Убираем активный класс у всех кнопок и контента
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                // Добавляем активный класс текущей кнопке и контенту
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    }
+
+    async function loadMyItems() {
+        try {
+            const user = utils.checkAuth();
+            if (!user) return;
+
+            const items = await api.getUserItems(user.id);
+
+            if (!items || items.length === 0) {
+                document.getElementById('myItemsGrid').innerHTML = '';
+                document.getElementById('noMyItems').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('noMyItems').style.display = 'none';
+            renderMyItems(items);
+
+            // Настройка поиска
+            const searchInput = document.getElementById('searchMyItems');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    filterMyItems(this.value.toLowerCase());
+                });
+            }
+
+        } catch (error) {
+            console.error('Error loading my items:', error);
+            document.getElementById('myItemsGrid').innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Ошибка загрузки ваших предметов</p>
+                        <button onclick="loadMyItems()" class="btn btn-primary">Повторить</button>
+                    </div>
+                `;
+        }
+    }
+
+    function renderMyItems(items) {
+        const grid = document.getElementById('myItemsGrid');
+        grid.innerHTML = '';
+
+        items.forEach(item => {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'item-card';
+            itemElement.dataset.id = item.id;
+            itemElement.dataset.name = item.name.toLowerCase();
+
+            const icon = getCategoryIcon(item.category);
+            const statusClass = item.status === 'AVAILABLE' ? 'status-available' : 'status-reserved';
+            const statusText = item.status === 'AVAILABLE' ? 'Доступно' : 'Забронировано';
+
+            itemElement.innerHTML = `
+                    <div class="item-image" style="background: linear-gradient(135deg, #${getColorHash(item.id)} 0%, #${getColorHash(item.name)} 100%);">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="item-content">
+                        <h3 class="item-title">${utils.escapeHtml(item.name)}</h3>
+                        <p class="item-description">${utils.escapeHtml(item.description || 'Без описания')}</p>
+
+                        <div class="item-stats">
+                            <div class="stat">
+                                <i class="fas fa-eye"></i>
+                                <span>${item.viewCount || 0} просмотров</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>${item.reservationCount || 0} бронирований</span>
+                            </div>
+                        </div>
+
+                        <div class="item-details">
+                            <span class="item-status ${statusClass}">${statusText}</span>
+                            <span class="item-date">Добавлен: ${utils.formatDate(item.createdAt)}</span>
+                        </div>
+
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="editItem('${item.id}')">
+                                <i class="fas fa-edit"></i> Изменить
+                            </button>
+                            <button class="btn btn-secondary" onclick="toggleItemStatus('${item.id}', '${item.status}')">
+                                <i class="fas fa-toggle-${item.status === 'AVAILABLE' ? 'on' : 'off'}"></i>
+                                ${item.status === 'AVAILABLE' ? 'Скрыть' : 'Показать'}
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteMyItem('${item.id}')">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            grid.appendChild(itemElement);
+        });
+    }
+
+    function filterMyItems(searchTerm) {
+        const items = document.querySelectorAll('#myItemsGrid .item-card');
+
+        items.forEach(item => {
+            const name = item.dataset.name;
+            const title = item.querySelector('.item-title').textContent.toLowerCase();
+            const description = item.querySelector('.item-description').textContent.toLowerCase();
+
+            if (!searchTerm || name.includes(searchTerm) || title.includes(searchTerm) || description.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    async function loadReservedItems() {
+        try {
+            const user = utils.checkAuth();
+            if (!user) return;
+
+            const reservations = await api.getReservations();
+            const myItems = await api.getUserItems(user.id);
+
+            // Фильтруем бронирования только для наших предметов
+            const myItemIds = myItems.map(item => item.id);
+            const reservedForMyItems = reservations.filter(res =>
+                myItemIds.includes(res.itemId) && res.status !== 'COMPLETED'
+            );
+
+            renderReservedItems(reservedForMyItems, myItems);
+
+        } catch (error) {
+            console.error('Error loading reserved items:', error);
+            document.getElementById('reservedItemsTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="error-cell">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Ошибка загрузки бронирований</p>
+                        </td>
+                    </tr>
+                `;
+        }
+    }
+
+    function renderReservedItems(reservations, myItems) {
+        const tbody = document.getElementById('reservedItemsTable');
+
+        if (!reservations || reservations.length === 0) {
+            tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-cell">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>Нет активных бронирований</p>
+                        </td>
+                    </tr>
+                `;
+            return;
+        }
+
+        tbody.innerHTML = '';
+
+        reservations.forEach(reservation => {
+            const item = myItems.find(i => i.id === reservation.itemId);
+            if (!item) return;
+
+            const row = document.createElement('tr');
+            row.dataset.reservationId = reservation.id;
+
+            const startDate = new Date(reservation.startDate);
+            const endDate = new Date(reservation.endDate);
+            const today = new Date();
+
+            let status = reservation.status;
+            let statusClass = '';
+
+            if (status === 'PENDING') {
+                status = 'Ожидает подтверждения';
+                statusClass = 'status-pending';
+            } else if (status === 'APPROVED') {
+                if (endDate < today) {
+                    status = 'Завершено';
+                    statusClass = 'status-completed';
+                } else if (startDate <= today && endDate >= today) {
+                    status = 'Активно';
+                    statusClass = 'status-active';
+                } else {
+                    status = 'Подтверждено';
+                    statusClass = 'status-approved';
+                }
+            } else if (status === 'REJECTED') {
+                status = 'Отклонено';
+                statusClass = 'status-rejected';
+            }
+
+            row.innerHTML = `
+                    <td>
+                        <strong>${utils.escapeHtml(item.name)}</strong>
+                        <small>${getCategoryName(item.category)}</small>
+                    </td>
+                    <td>
+                        <div class="user-info">
+                            <i class="fas fa-user"></i>
+                            <span>${utils.escapeHtml(reservation.userName || 'Пользователь')}</span>
+                        </div>
+                        ${reservation.userPhone ? `<small><i class="fas fa-phone"></i> ${reservation.userPhone}</small>` : ''}
+                    </td>
+                    <td>${utils.formatDate(reservation.startDate)}</td>
+                    <td>${utils.formatDate(reservation.endDate)}</td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="manageReservation('${reservation.id}')">
+                            <i class="fas fa-cog"></i> Управление
+                        </button>
+                    </td>
+                `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    function getCategoryIcon(category) {
+        const icons = {
+            'ELECTRONICS': 'fas fa-laptop',
+            'BOOKS': 'fas fa-book',
+            'CLOTHING': 'fas fa-tshirt',
+            'SPORTS': 'fas fa-futbol',
+            'HOME': 'fas fa-home',
+            'OTHER': 'fas fa-box'
+        };
+        return icons[category] || 'fas fa-box';
+    }
+
+    async function toggleItemStatus(itemId, currentStatus) {
+        try {
+            const newStatus = currentStatus === 'AVAILABLE' ? 'NOT_AVAILABLE' : 'AVAILABLE';
+
+            await api.updateItem(itemId, { status: newStatus });
+
+            utils.showMessage(`Предмет ${newStatus === 'AVAILABLE' ? 'сделан доступным' : 'скрыт'}`, 'success');
+
+            // Обновляем отображение
+            setTimeout(() => {
+                loadMyItems();
+            }, 500);
+
+        } catch (error) {
+            console.error('Error toggling item status:', error);
+            utils.showMessage('Ошибка при изменении статуса', 'error');
+        }
+    }
+
+    async function deleteMyItem(itemId) {
+        if (!confirm('Вы уверены, что хотите удалить этот предмет? Это действие нельзя отменить.')) {
+            return;
+        }
+
+        try {
+            await api.deleteItem(itemId);
+
+            utils.showMessage('Предмет успешно удален', 'success');
+
+            // Удаляем из DOM
+            const itemElement = document.querySelector(`.item-card[data-id="${itemId}"]`);
+            if (itemElement) {
+                itemElement.remove();
+            }
+
+            // Проверяем, остались ли предметы
+            const items = document.querySelectorAll('#myItemsGrid .item-card');
+            if (items.length === 0) {
+                document.getElementById('noMyItems').style.display = 'block';
+            }
+
+        } catch (error) {
+            console.error('Error deleting item:', error);
+            utils.showMessage('Ошибка при удалении предмета', 'error');
+        }
+    }
+
+    async function manageReservation(reservationId) {
+        // В будущем можно реализовать подробное управление бронированием
+        alert(`Управление бронированием ID: ${reservationId}\n\nЭта функция будет реализована позже`);
+    }
+
+    // Модальное окно управления бронированием
+    const manageModal = document.getElementById('manageReservationModal');
+    const closeManageModal = document.getElementById('closeManageModal');
+
+    if (closeManageModal) {
+        closeManageModal.addEventListener('click', () => {
+            manageModal.classList.remove('show');
+        });
+    }
+
+    if (manageModal) {
+        manageModal.addEventListener('click', function(e) {
+            if (e.target === manageModal) {
+                manageModal.classList.remove('show');
+            }
+        });
+    }
+</script>
+</body>
+</html>

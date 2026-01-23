@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить предмет - Share Item</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="items.html"><i class="fas fa-box-open"></i> Предметы</a>
+            <a href="add-item.html" class="active"><i class="fas fa-plus-circle"></i> Добавить</a>
+            <a href="my-items.html"><i class="fas fa-th-list"></i> Мои вещи</a>
+            <a href="reservations.html"><i class="fas fa-calendar-check"></i> Бронирования</a>
+            <div id="authButtons"></div>
+        </div>
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-plus-circle"></i> Добавить предмет</h1>
+        <p>Поделитесь вещами, которыми вы готовы поделиться с другими</p>
+    </div>
+
+    <div class="form-container">
+        <form id="itemForm" class="item-form">
+            <div class="form-section">
+                <h2><i class="fas fa-info-circle"></i> Основная информация</h2>
+
+                <div class="form-group">
+                    <label for="itemName">
+                        <i class="fas fa-tag"></i> Название предмета *
+                    </label>
+                    <input type="text" id="itemName" name="name" required
+                           placeholder="Например: Книга 'Война и мир'">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDescription">
+                        <i class="fas fa-align-left"></i> Описание *
+                    </label>
+                    <textarea id="itemDescription" name="description" required
+                              rows="4" placeholder="Опишите состояние предмета, особенности, условия использования..."></textarea>
+                    <div class="char-count">
+                        <span id="charCount">0</span>/500 символов
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="itemCategory">
+                            <i class="fas fa-folder"></i> Категория *
+                        </label>
+                        <select id="itemCategory" name="category" required>
+                            <option value="">Выберите категорию</option>
+                            <option value="ELECTRONICS">Электроника</option>
+                            <option value="BOOKS">Книги</option>
+                            <option value="CLOTHING">Одежда</option>
+                            <option value="SPORTS">Спорт</option>
+                            <option value="HOME">Для дома</option>
+                            <option value="OTHER">Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemCondition">
+                            <i class="fas fa-star"></i> Состояние *
+                        </label>
+                        <select id="itemCondition" name="condition" required>
+                            <option value="">Выберите состояние</option>
+                            <option value="NEW">Новое</option>
+                            <option value="EXCELLENT">Отличное</option>
+                            <option value="GOOD">Хорошее</option>
+                            <option value="SATISFACTORY">Удовлетворительное</option>
+                            <option value="USED">Б/у</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-cogs"></i> Дополнительные параметры</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="itemLocation">
+                            <i class="fas fa-map-marker-alt"></i> Местоположение
+                        </label>
+                        <input type="text" id="itemLocation" name="location"
+                               placeholder="Город или район">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemValue">
+                            <i class="fas fa-money-bill-wave"></i> Примерная стоимость
+                        </label>
+                        <input type="number" id="itemValue" name="estimatedValue"
+                               placeholder="В рублях" min="0" step="100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="itemTags">
+                        <i class="fas fa-hashtag"></i> Теги (через запятую)
+                    </label>
+                    <input type="text" id="itemTags" name="tags"
+                           placeholder="например: книга, классика, толстой">
+                    <small>Поможет другим быстрее найти ваш предмет</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-images"></i> Изображения</h2>
+
+                <div class="image-upload-area" id="imageUploadArea">
+                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    <p>Перетащите сюда изображения или нажмите для выбора</p>
+                    <input type="file" id="imageUpload" accept="image/*" multiple
+                           style="display: none;">
+                    <button type="button" class="btn btn-secondary" id="browseImages">
+                        <i class="fas fa-folder-open"></i> Выбрать файлы
+                    </button>
+                </div>
+
+                <div class="image-preview" id="imagePreview">
+                    <!-- Препросмотр изображений будет здесь -->
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="allowReservation" checked>
+                        <span>Разрешить бронирование этого предмета</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    <i class="fas fa-arrow-left"></i> Отмена
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-save"></i> Добавить предмет
+                </button>
+            </div>
+
+            <input type="hidden" id="itemId" name="id">
+        </form>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2024 ShareItem Platform. Все права защищены.</p>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/items.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        initMobileMenu();
+        updateAuthUI();
+        setupItemForm();
+
+        // Проверка авторизации
+        const user = utils.checkAuth();
+        if (!user) {
+            utils.showMessage('Для добавления предметов необходимо войти в систему', 'error');
+            window.location.href = 'login.html';
+            return;
+        }
+    });
+
+    function setupItemForm() {
+        // Счетчик символов
+        const descriptionInput = document.getElementById('itemDescription');
+        const charCount = document.getElementById('charCount');
+
+        if (descriptionInput && charCount) {
+            descriptionInput.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+                if (this.value.length > 500) {
+                    charCount.style.color = '#f44336';
+                } else if (this.value.length > 450) {
+                    charCount.style.color = '#ff9800';
+                } else {
+                    charCount.style.color = '#4CAF50';
+                }
+            });
+        }
+
+        // Загрузка изображений
+        const imageUpload = document.getElementById('imageUpload');
+        const browseBtn = document.getElementById('browseImages');
+        const uploadArea = document.getElementById('imageUploadArea');
+        const imagePreview = document.getElementById('imagePreview');
+
+        let selectedImages = [];
+
+        // Клик по области загрузки
+        if (uploadArea) {
+            uploadArea.addEventListener('click', () => imageUpload.click());
+
+            // Drag & drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                uploadArea.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                uploadArea.classList.remove('highlight');
+            }
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+        }
+
+        // Кнопка выбора файлов
+        if (browseBtn) {
+            browseBtn.addEventListener('click', () => imageUpload.click());
+        }
+
+        // Обработка выбора файлов
+        if (imageUpload) {
+            imageUpload.addEventListener('change', function(e) {
+                handleFiles(this.files);
+            });
+        }
+
+        function handleFiles(files) {
+            selectedImages = [];
+            imagePreview.innerHTML = '';
+
+            [...files].forEach(file => {
+                if (!file.type.startsWith('image/')) {
+                    utils.showMessage('Пожалуйста, выберите только изображения', 'error');
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) { // 5MB
+                    utils.showMessage('Изображение слишком большое (макс. 5MB)', 'error');
+                    return;
+                }
+
+                selectedImages.push(file);
+                previewImage(file);
+            });
+
+            if (selectedImages.length > 0) {
+                uploadArea.innerHTML = `
+                        <i class="fas fa-check-circle fa-3x" style="color: #4CAF50;"></i>
+                        <p>Выбрано ${selectedImages.length} изображений</p>
+                        <button type="button" class="btn btn-secondary" onclick="clearImages()">
+                            <i class="fas fa-times"></i> Очистить
+                        </button>
+                    `;
+            }
+        }
+
+        function previewImage(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function() {
+                const imgElement = document.createElement('div');
+                imgElement.className = 'preview-item';
+                imgElement.innerHTML = `
+                        <img src="${reader.result}" alt="Preview">
+                        <button type="button" class="remove-image" onclick="removeImage(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                imagePreview.appendChild(imgElement);
+            };
+        }
+
+        // Глобальные функции для удаления изображений
+        window.clearImages = function() {
+            selectedImages = [];
+            imagePreview.innerHTML = '';
+            imageUpload.value = '';
+            uploadArea.innerHTML = `
+                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    <p>Перетащите сюда изображения или нажмите для выбора</p>
+                    <button type="button" class="btn btn-secondary" id="browseImages">
+                        <i class="fas fa-folder-open"></i> Выбрать файлы
+                    </button>
+                `;
+            document.getElementById('browseImages').addEventListener('click', () => imageUpload.click());
+        };
+
+        window.removeImage = function(button) {
+            const previewItem = button.closest('.preview-item');
+            const index = Array.from(imagePreview.children).indexOf(previewItem);
+            selectedImages.splice(index, 1);
+            previewItem.remove();
+
+            if (selectedImages.length === 0) {
+                clearImages();
+            }
+        };
+
+        // Обработка формы
+        const itemForm = document.getElementById('itemForm');
+        if (itemForm) {
+            itemForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const user = utils.checkAuth();
+                if (!user) {
+                    utils.showMessage('Сессия истекла. Войдите снова', 'error');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const formData = {
+                    name: document.getElementById('itemName').value.trim(),
+                    description: document.getElementById('itemDescription').value.trim(),
+                    category: document.getElementById('itemCategory').value,
+                    condition: document.getElementById('itemCondition').value,
+                    location: document.getElementById('itemLocation').value.trim() || null,
+                    estimatedValue: document.getElementById('itemValue').value || null,
+                    tags: document.getElementById('itemTags').value.trim() || null,
+                    status: document.getElementById('allowReservation').checked ? 'AVAILABLE' : 'NOT_AVAILABLE',
+                    ownerId: user.id
+                };
+
+                // Валидация
+                if (!formData.name || !formData.description || !formData.category || !formData.condition) {
+                    utils.showMessage('Заполните все обязательные поля', 'error');
+                    return;
+                }
+
+                if (formData.description.length > 500) {
+                    utils.showMessage('Описание не должно превышать 500 символов', 'error');
+                    return;
+                }
+
+                // Подготовка изображений (в реальном приложении здесь была бы загрузка на сервер)
+                if (selectedImages.length > 0) {
+                    // В вашем бэкенде пока нет загрузки изображений, но можно добавить base64
+                    // formData.images = await Promise.all(selectedImages.map(img => utils.handleImageUpload(img)));
+                }
+
+                try {
+                    const submitBtn = document.getElementById('submitBtn');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+                    submitBtn.disabled = true;
+
+                    const response = await api.createItem(formData);
+
+                    utils.showMessage('Предмет успешно добавлен!', 'success');
+
+                    // Перенаправление через 1.5 секунды
+                    setTimeout(() => {
+                        window.location.href = 'my-items.html';
+                    }, 1500);
+
+                } catch (error) {
+                    console.error('Error creating item:', error);
+                    utils.showMessage('Ошибка при создании предмета', 'error');
+                } finally {
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Проверка редактирования (если есть ID в URL)
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        if (editId) {
+            loadItemForEdit(editId);
+        }
+    }
+
+    async function loadItemForEdit(itemId) {
+        try {
+            const item = await api.getItem(itemId);
+
+            if (item) {
+                document.getElementById('itemId').value = item.id;
+                document.getElementById('itemName').value = item.name || '';
+                document.getElementById('itemDescription').value = item.description || '';
+                document.getElementById('itemCategory').value = item.category || '';
+                document.getElementById('itemCondition').value = item.condition || '';
+                document.getElementById('itemLocation').value = item.location || '';
+                document.getElementById('itemValue').value = item.estimatedValue || '';
+                document.getElementById('itemTags').value = item.tags || '';
+
+                if (item.status === 'NOT_AVAILABLE') {
+                    document.getElementById('allowReservation').checked = false;
+                }
+
+                // Обновляем заголовок
+                document.querySelector('h1').innerHTML = '<i class="fas fa-edit"></i> Редактировать предмет';
+                document.querySelector('.page-header p').textContent = 'Внесите изменения в информацию о предмете';
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-save"></i> Сохранить изменения';
+
+                // Меняем действие формы
+                const itemForm = document.getElementById('itemForm');
+                itemForm.onsubmit = async function(e) {
+                    e.preventDefault();
+                    await updateItem(itemId);
+                };
+            }
+        } catch (error) {
+            console.error('Error loading item for edit:', error);
+            utils.showMessage('Не удалось загрузить данные предмета', 'error');
+        }
+    }
+
+    async function updateItem(itemId) {
+        const user = utils.checkAuth();
+        if (!user) {
+            utils.showMessage('Сессия истекла. Войдите снова', 'error');
+            return;
+        }
+
+        const formData = {
+            name: document.getElementById('itemName').value.trim(),
+            description: document.getElementById('itemDescription').value.trim(),
+            category: document.getElementById('itemCategory').value,
+            condition: document.getElementById('itemCondition').value,
+            location: document.getElementById('itemLocation').value.trim() || null,
+            estimatedValue: document.getElementById('itemValue').value || null,
+            tags: document.getElementById('itemTags').value.trim() || null,
+            status: document.getElementById('allowReservation').checked ? 'AVAILABLE' : 'NOT_AVAILABLE'
+        };
+
+        try {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+            submitBtn.disabled = true;
+
+            const response = await api.updateItem(itemId, formData);
+
+            utils.showMessage('Предмет успешно обновлен!', 'success');
+
+            // Перенаправление через 1.5 секунды
+            setTimeout(() => {
+                window.location.href = 'my-items.html';
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error updating item:', error);
+            utils.showMessage('Ошибка при обновлении предмета', 'error');
+        } finally {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>

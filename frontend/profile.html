@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль - Share Item</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="items.html"><i class="fas fa-box-open"></i> Предметы</a>
+            <a href="add-item.html"><i class="fas fa-plus-circle"></i> Добавить</a>
+            <a href="my-items.html"><i class="fas fa-th-list"></i> Мои вещи</a>
+            <a href="reservations.html"><i class="fas fa-calendar-check"></i> Бронирования</a>
+            <div id="authButtons"></div>
+        </div>
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-user-circle"></i> Мой профиль</h1>
+        <p>Управляйте вашей учетной записью и настройками</p>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="profile-avatar" id="profileAvatar">
+                    <img src="https://ui-avatars.com/api/?name=User&background=4CAF50&color=fff&size=150"
+                         alt="Аватар" id="avatarImage">
+                    <button class="avatar-upload" id="uploadAvatarBtn">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" id="avatarFile" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="profile-info">
+                    <h2 id="profileName">Загрузка...</h2>
+                    <p class="profile-email" id="profileEmail">Загрузка...</p>
+                    <p class="profile-role" id="profileRole">Загрузка...</p>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-box"></i>
+                        <div>
+                            <span class="stat-number" id="itemsCount">0</span>
+                            <span class="stat-label">Предметов</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <span class="stat-number" id="reservationsCount">0</span>
+                            <span class="stat-label">Бронирований</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <span class="stat-number" id="rating">0.0</span>
+                            <span class="stat-label">Рейтинг</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-menu">
+                <button class="sidebar-btn active" data-tab="personal-info">
+                    <i class="fas fa-user"></i> Личная информация
+                </button>
+                <button class="sidebar-btn" data-tab="security">
+                    <i class="fas fa-shield-alt"></i> Безопасность
+                </button>
+                <button class="sidebar-btn" data-tab="preferences">
+                    <i class="fas fa-cog"></i> Настройки
+                </button>
+                <button class="sidebar-btn" data-tab="notifications">
+                    <i class="fas fa-bell"></i> Уведомления
+                </button>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <!-- Личная информация -->
+            <div class="tab-content active" id="personal-info">
+                <div class="tab-header">
+                    <h2><i class="fas fa-user"></i> Личная информация</h2>
+                    <p>Управляйте вашими персональными данными</p>
+                </div>
+
+                <form id="personalInfoForm" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">
+                                <i class="fas fa-user"></i> Имя *
+                            </label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">
+                                <i class="fas fa-user"></i> Фамилия *
+                            </label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="fas fa-at"></i> Имя пользователя *
+                        </label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i> Телефон
+                        </label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">
+                            <i class="fas fa-map-marker-alt"></i> Адрес
+                        </label>
+                        <textarea id="address" name="address" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">
+                            <i class="fas fa-edit"></i> О себе
+                        </label>
+                        <textarea id="bio" name="bio" rows="4"
+                                  placeholder="Расскажите немного о себе..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelPersonalInfo">
+                            Отмена
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Безопасность -->
+            <div class="tab-content" id="security">
+                <div class="tab-header">
+                    <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
+                    <p>Управление паролем и безопасностью аккаунта</p>
+                </div>
+
+                <form id="securityForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="currentPassword">
+                            <i class="fas fa-lock"></i> Текущий пароль *
+                        </label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="newPassword">
+                                <i class="fas fa-key"></i> Новый пароль *
+                            </label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar"></div>
+                                <span class="strength-text">Надежность пароля</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fas fa-key"></i> Подтверждение пароля *
+                            </label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                    </div>
+
+                    <div class="password-requirements">
+                        <h4>Требования к паролю:</h4>
+                        <ul>
+                            <li id="req-length">Не менее 8 символов</li>
+                            <li id="req-uppercase">Содержит заглавные буквы</li>
+                            <li id="req-lowercase">Содержит строчные буквы</li>
+                            <li id="req-numbers">Содержит цифры</li>
+                            <li id="req-special">Содержит специальные символы</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сменить пароль
+                        </button>
+                    </div>
+                </form>
+
+                <div class="security-settings">
+                    <h3>Дополнительные настройки безопасности</h3>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Двухфакторная аутентификация</h4>
+                            <p>Дополнительная защита вашего аккаунта</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="twoFactorAuth">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Активные сессии</h4>
+                            <p>Управление устройствами, на которых выполнен вход</p>
+                        </div>
+                        <button class="btn btn-secondary" id="viewSessionsBtn">
+                            <i class="fas fa-desktop"></i> Просмотр
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Настройки -->
+            <div class="tab-content" id="preferences">
+                <div class="tab-header">
+                    <h2><i class="fas fa-cog"></i> Настройки</h2>
+                    <p>Настройте работу платформы под себя</p>
+                </div>
+
+                <div class="preferences-grid">
+                    <div class="preference-card">
+                        <i class="fas fa-globe"></i>
+                        <h3>Язык</h3>
+                        <select id="languageSelect" class="preference-select">
+                            <option value="ru">Русский</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+
+                    <div class="preference-card">
+                        <i class="fas fa-palette"></i>
+                        <h3>Тема</h3>
+                        <select id="themeSelect" class="preference-select">
+                            <option value="light">Светлая</option>
+                            <option value="dark">Тёмная</option>
+                            <option value="auto">Системная</option>
+                        </select>
+                    </div>
+
+                    <div class="preference-card">
+                        <i class="fas fa-calendar"></i>
+                        <h3>Формат даты</h3>
+                        <select id="dateFormatSelect" class="preference-select">
+                            <option value="ru">ДД.ММ.ГГГГ</option>
+                            <option value="us">ММ/ДД/ГГГГ</option>
+                            <option value="iso">ГГГГ-ММ-ДД</option>
+                        </select>
+                    </div>
+
+                    <div class="preference-card">
+                        <i class="fas fa-eye"></i>
+                        <h3>Приватность профиля</h3>
+                        <select id="privacySelect" class="preference-select">
+                            <option value="public">Публичный</option>
+                            <option value="private">Приватный</option>
+                            <option value="friends">Только друзья</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" id="savePreferences">
+                        <i class="fas fa-save"></i> Сохранить настройки
+                    </button>
+                    <button class="btn btn-secondary" id="resetPreferences">
+                        <i class="fas fa-redo"></i> Сбросить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Уведомления -->
+            <div class="tab-content" id="notifications">
+                <div class="tab-header">
+                    <h2><i class="fas fa-bell"></i> Уведомления</h2>
+                    <p>Настройте получение уведомлений</p>
+                </div>
+
+                <div class="notification-settings">
+                    <div class="notification-category">
+                        <h3>Email уведомления</h3>
+
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h4>Новые сообщения</h4>
+                                <p>Уведомления о новых сообщениях от других пользователей</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailMessages" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h4>Бронирования</h4>
+                                <p>Уведомления о новых бронированиях ваших предметов</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailReservations" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h4>Обновления платформы</h4>
+                                <p>Новости и обновления ShareItem</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailUpdates" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="notification-category">
+                        <h3>Push-уведомления</h3>
+
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h4>Напоминания о бронированиях</h4>
+                                <p>Напоминания о начале и окончании бронирований</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="pushReminders" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="notification-item">
+                            <div class="notification-info">
+                                <h4>Новые предложения</h4>
+                                <p>Уведомления о новых предметах по вашим интересам</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="pushOffers">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" id="saveNotifications">
+                            <i class="fas fa-save"></i> Сохранить настройки
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Модальное окно смены аватара -->
+<div class="modal" id="avatarModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-camera"></i> Смена аватара</h2>
+            <button class="modal-close" id="closeAvatarModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="avatar-options">
+                <div class="avatar-option" id="uploadNewAvatar">
+                    <i class="fas fa-upload"></i>
+                    <h3>Загрузить фото</h3>
+                    <p>Выберите изображение с вашего устройства</p>
+                </div>
+
+                <div class="avatar-option" id="generateAvatar">
+                    <i class="fas fa-robot"></i>
+                    <h3>Сгенерировать аватар</h3>
+                    <p>Создайте уникальный аватар</p>
+                </div>
+
+                <div class="avatar-option" id="removeAvatar">
+                    <i class="fas fa-trash"></i>
+                    <h3>Удалить аватар</h3>
+                    <p>Вернуть аватар по умолчанию</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>© 2024 ShareItem Platform. Все права защищены.</p>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>

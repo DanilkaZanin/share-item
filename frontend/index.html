@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Item - Обмен вещами</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Навигация -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="items.html"><i class="fas fa-box-open"></i> Предметы</a>
+            <a href="add-item.html"><i class="fas fa-plus-circle"></i> Добавить</a>
+            <a href="my-items.html"><i class="fas fa-th-list"></i> Мои вещи</a>
+            <a href="reservations.html"><i class="fas fa-calendar-check"></i> Бронирования</a>
+            <div id="authButtons">
+                <!-- Здесь будут кнопки Вход/Регистрация или профиль -->
+            </div>
+        </div>
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- Герой-секция -->
+<header class="hero">
+    <div class="hero-content">
+        <h1>Делитесь вещами, экономьте ресурсы</h1>
+        <p>Платформа для обмена и временного использования вещей между людьми</p>
+        <div class="hero-buttons">
+            <a href="register.html" class="btn btn-primary">Начать обмен</a>
+            <a href="items.html" class="btn btn-secondary">Посмотреть вещи</a>
+        </div>
+    </div>
+</header>
+
+<!-- Основной контент -->
+<main class="container">
+    <section class="features">
+        <h2>Как это работает?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-search"></i>
+                <h3>Найдите вещь</h3>
+                <p>Ищите нужные вам предметы среди предложений других пользователей</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-handshake"></i>
+                <h3>Забронируйте</h3>
+                <p>Договоритесь с владельцем о времени использования</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-gift"></i>
+                <h3>Пользуйтесь</h3>
+                <p>Берите вещь на время или обменивайтесь на что-то своё</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-share-alt"></i>
+                <h3>Делитесь</h3>
+                <p>Выложите свои вещи для временного использования другими</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <h2>Статистика платформы</h2>
+        <div class="stats-grid">
+            <div class="stat">
+                <span id="totalItems">0</span>
+                <p>Предметов доступно</p>
+            </div>
+            <div class="stat">
+                <span id="totalUsers">0</span>
+                <p>Пользователей</p>
+            </div>
+            <div class="stat">
+                <span id="activeReservations">0</span>
+                <p>Активных бронирований</p>
+            </div>
+            <div class="stat">
+                <span id="itemsShared">0</span>
+                <p>Вещей обменяно</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Футер -->
+<footer class="footer">
+    <p>© 2024 ShareItem Platform. Все права защищены.</p>
+    <p>Проект для обмена вещами между людьми</p>
+</footer>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

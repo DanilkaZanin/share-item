@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Share Item</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="login.html">Уже есть аккаунт?</a>
+        </div>
+    </div>
+</nav>
+
+<main class="auth-container">
+    <div class="auth-card">
+        <h1><i class="fas fa-user-plus"></i> Создание аккаунта</h1>
+        <p>Заполните форму для регистрации</p>
+
+        <form id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">
+                        <i class="fas fa-user"></i> Имя
+                    </label>
+                    <input type="text" id="firstName" name="firstName" required
+                           placeholder="Ваше имя">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">
+                        <i class="fas fa-user"></i> Фамилия
+                    </label>
+                    <input type="text" id="lastName" name="lastName" required
+                           placeholder="Ваша фамилия">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" id="email" name="email" required
+                       placeholder="ваш@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-at"></i> Имя пользователя
+                </label>
+                <input type="text" id="username" name="username" required
+                       placeholder="Придумайте логин">
+            </div>
+
+            <div class="form-group">
+                <label for="phone">
+                    <i class="fas fa-phone"></i> Телефон (опционально)
+                </label>
+                <input type="tel" id="phone" name="phone"
+                       placeholder="+7 (XXX) XXX-XX-XX">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Пароль
+                    </label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Придумайте пароль">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        <i class="fas fa-lock"></i> Подтверждение
+                    </label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                           placeholder="Повторите пароль">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox">
+                    <input type="checkbox" name="agreeTerms" required>
+                    <span>Я согласен с <a href="#">правилами использования</a> и <a href="#">политикой конфиденциальности</a></span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-user-plus"></i> Зарегистрироваться
+            </button>
+
+            <div class="auth-divider">
+                <span>или</span>
+            </div>
+
+            <a href="login.html" class="btn btn-secondary btn-block">
+                <i class="fas fa-sign-in-alt"></i> Уже есть аккаунт?
+            </a>
+        </form>
+
+        <div class="auth-footer">
+            <p>Регистрируясь, вы соглашаетесь с нашими условиями</p>
+        </div>
+    </div>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const registerForm = document.getElementById('registerForm');
+
+        // Валидация пароля
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const passwordError = document.getElementById('passwordError');
+
+            if (password !== confirmPassword) {
+                if (!passwordError) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.id = 'passwordError';
+                    errorDiv.className = 'error-message';
+                    errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Пароли не совпадают';
+                    document.getElementById('confirmPassword').parentNode.appendChild(errorDiv);
+                }
+                return false;
+            } else {
+                if (passwordError) passwordError.remove();
+            }
+
+            if (password.length < 6) {
+                utils.showMessage('Пароль должен быть не менее 6 символов', 'warning');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Слушатели для валидации пароля
+        document.getElementById('password').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+        // Обработка формы регистрации
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!validatePassword()) {
+                utils.showMessage('Проверьте пароли', 'error');
+                return;
+            }
+
+            const formData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value || null
+            };
+
+            if (!utils.isValidEmail(formData.email)) {
+                utils.showMessage('Введите корректный email', 'error');
+                return;
+            }
+
+            try {
+                const submitBtn = registerForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Регистрация...';
+                submitBtn.disabled = true;
+
+                const response = await api.register(formData);
+
+                if (response.id || response.message) {
+                    utils.showMessage('Регистрация успешна! Теперь войдите в аккаунт', 'success');
+
+                    // Перенаправляем на страницу входа через 2 секунды
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    throw new Error('Ошибка регистрации');
+                }
+
+            } catch (error) {
+                console.error('Registration error:', error);
+
+                let message = 'Ошибка регистрации';
+                if (error.message.includes('409') || error.message.includes('уже существует')) {
+                    message = 'Пользователь с таким email или логином уже существует';
+                } else if (error.message.includes('Network')) {
+                    message = 'Проверьте подключение к интернету и запущен ли бэкенд';
+                }
+
+                utils.showMessage(message, 'error');
+            } finally {
+                const submitBtn = registerForm.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Share Item</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+            <i class="fas fa-exchange-alt"></i> ShareItem
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> Главная</a>
+            <a href="register.html">Ещё нет аккаунта?</a>
+        </div>
+    </div>
+</nav>
+
+<main class="auth-container">
+    <div class="auth-card">
+        <h1><i class="fas fa-sign-in-alt"></i> Вход в аккаунт</h1>
+        <p>Введите ваши данные для входа</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email
+                </label>
+                <input type="email" id="email" name="email" required
+                       placeholder="ваш@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Пароль
+                </label>
+                <input type="password" id="password" name="password" required
+                       placeholder="Ваш пароль">
+                <button type="button" class="show-password" id="showPassword">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox">
+                    <input type="checkbox" name="remember">
+                    <span>Запомнить меня</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-sign-in-alt"></i> Войти
+            </button>
+
+            <div class="auth-divider">
+                <span>или</span>
+            </div>
+
+            <a href="index.html" class="btn btn-secondary btn-block">
+                <i class="fas fa-home"></i> Вернуться на главную
+            </a>
+        </form>
+
+        <div class="auth-footer">
+            <p>Нет аккаунта? <a href="register.html">Зарегистрируйтесь</a></p>
+        </div>
+    </div>
+</main>
+
+<script src="js/utils.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация показа пароля
+        const showPasswordBtn = document.getElementById('showPassword');
+        const passwordInput = document.getElementById('password');
+
+        showPasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            this.innerHTML = type === 'password' ?
+                '<i class="fas fa-eye"></i>' :
+                '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Обработка формы входа
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                utils.showMessage('Заполните все поля', 'error');
+                return;
+            }
+
+            if (!utils.isValidEmail(email)) {
+                utils.showMessage('Введите корректный email', 'error');
+                return;
+            }
+
+            try {
+                const loginBtn = loginForm.querySelector('button[type="submit"]');
+                const originalText = loginBtn.innerHTML;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+                loginBtn.disabled = true;
+
+                const response = await api.login({
+                    email: email,
+                    password: password
+                });
+
+                if (response.accessToken) {
+                    // Сохраняем токены
+                    localStorage.setItem('token', response.accessToken);
+                    localStorage.setItem('refreshToken', response.refreshToken);
+
+                    // Получаем информацию о пользователе
+                    const user = await api.getCurrentUser();
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    utils.showMessage('Успешный вход!', 'success');
+
+                    // Перенаправляем на главную через 1 секунду
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    throw new Error('Неверный ответ от сервера');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                let message = 'Ошибка входа';
+
+                if (error.message.includes('401') || error.message.includes('Invalid')) {
+                    message = 'Неверный email или пароль';
+                } else if (error.message.includes('Network')) {
+                    message = 'Проверьте подключение к интернету';
+                }
+
+                utils.showMessage(message, 'error');
+            } finally {
+                const loginBtn = loginForm.querySelector('button[type="submit"]');
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+    });
+</script>
+</body>
+</html>
