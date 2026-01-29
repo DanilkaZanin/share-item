@@ -1,0 +1,1984 @@
+{
+  "info": {
+    "_postman_id": "e809ec87-5da7-4d21-9da7-d2edec57b4ff",
+    "name": "sharing-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33041832"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "sign-up",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"user@mail.ru\",\r\n    \"password\": \"password\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/signup",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "sign-in",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User created successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "// Сохраняем ID для других запросов\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.collectionVariables.set(\"base_user_token\", response.token);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"user@mail.ru\",\r\n    \"password\": \"password\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/auth/signin",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "signin"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "update_user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User updated successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User fields in response\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.have.property(\"id\");\r",
+                  "    pm.expect(response).to.have.property(\"email\");\r",
+                  "    pm.expect(response).to.have.property(\"password\");\r",
+                  "    pm.expect(response).to.have.property(\"name\");\r",
+                  "    pm.expect(response).to.have.property(\"description\");\r",
+                  "    pm.expect(response).to.have.property(\"createdAt\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User data in response\", function(){\r",
+                  "    const response = pm.response.json();\r",
+                  "    \r",
+                  "    pm.expect(response.description).to.equal(\"I am updated user 1\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{base_user_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\" : \"userName\",\r\n    \"description\" : \"I am updated user 1\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/update",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "empty_user_update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User updated successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User fields in response\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.have.property(\"id\");\r",
+                  "    pm.expect(response).to.have.property(\"email\");\r",
+                  "    pm.expect(response).to.have.property(\"password\");\r",
+                  "    pm.expect(response).to.have.property(\"name\");\r",
+                  "    pm.expect(response).to.have.property(\"description\");\r",
+                  "    pm.expect(response).to.have.property(\"createdAt\");\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/{{created_user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User got successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User fields in response\", function () {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.expect(response).to.have.property(\"id\");\r",
+                  "    pm.expect(response).to.have.property(\"email\");\r",
+                  "    pm.expect(response).to.have.property(\"password\");\r",
+                  "    pm.expect(response).to.have.property(\"name\");\r",
+                  "    pm.expect(response).to.have.property(\"description\");\r",
+                  "    pm.expect(response).to.have.property(\"createdAt\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYWlsQG1haWwucnUiLCJpYXQiOjE3NjU4MjU0MDYsImV4cCI6MTc2NTkxMTgwNn0.pRm7Un3BOV6P177WH1flBini7gArsHEnxeKfm4LqnE4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/{{created_user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_user_neg",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Users got successfully\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_all_users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Users got successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQG1haWwucnUiLCJpYXQiOjE3NjYyMzIzOTMsImV4cCI6MTc2NjMxODc5M30.2nboXOfHr8Xt_fguWlE0_YVm5UwuIh2oIkzORH1OF8o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{base_user_token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/users/all",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User deleted successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/{{created_user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "{{created_user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "items",
+      "item": [
+        {
+          "name": "create_item",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User created successfully\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User data in response\", function(){\r",
+                  "    const response = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(response.id).is.not.null;\r",
+                  "    pm.expect(response.pricePerDay).to.equal(200);\r",
+                  "    pm.expect(response.status).to.equal(\"AVAILABLE\");\r",
+                  "    pm.expect(response.name).to.equal(\"фен\");\r",
+                  "    pm.expect(response.description).to.equal(\"лучший фен эвер\");\r",
+                  "    pm.expect(response.createdAt).is.not.null;\r",
+                  "});\r",
+                  "\r",
+                  "// Сохраняем ID для других запросов\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.collectionVariables.set(\"created_item_id\", response.id);\r",
+                  "    console.log(\"Created item ID:\", response.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQG1haWwucnUiLCJpYXQiOjE3NjYyMzIzOTMsImV4cCI6MTc2NjMxODc5M30.2nboXOfHr8Xt_fguWlE0_YVm5UwuIh2oIkzORH1OF8o",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\" : \"фен\",\r\n    \"description\" : \"лучший фен эвер\",\r\n    \"pricePerDay\" : \"200\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update_item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User created successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User data in response\", function(){\r",
+                  "    const response = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(response.id).is.not.null;\r",
+                  "    pm.expect(response.pricePerDay).to.equal(300);\r",
+                  "    pm.expect(response.status).to.equal(\"AVAILABLE\");\r",
+                  "    pm.expect(response.name).to.equal(\"фен\");\r",
+                  "    pm.expect(response.description).to.equal(\"лучший фен эвер\");\r",
+                  "    pm.expect(response.createdAt).is.not.null;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{items_user_id}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"pricePerDay\" : \"300\"\r\n} ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{created_item_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{created_item_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User created successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"User data in response\", function() {\r",
+                  "    const response = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(response.id).is.not.null;\r",
+                  "    pm.expect(response.pricePerDay).to.equal(300);\r",
+                  "    pm.expect(response.status).to.equal(\"AVAILABLE\");\r",
+                  "    pm.expect(response.name).to.equal(\"фен\");\r",
+                  "    pm.expect(response.description).to.equal(\"лучший фен эвер\");\r",
+                  "    pm.expect(response.createdAt).is.not.null;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{items_user_id}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{created_item_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{created_item_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_user_items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User list got successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{items_user_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_items_by_name",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{items_user2_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/search/ф",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "search",
+                "ф"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Тут тесты для итемов",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              "\r",
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "bookings",
+      "item": [
+        {
+          "name": "create_booking",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// 1. Создаем первого пользователя\r",
+                  "const user1Data = {\r",
+                  "    name: 'testuser1',\r",
+                  "    password: 'testpass1',\r",
+                  "    description: 'I am user 1',\r",
+                  "    email: 'user1_' + Date.now() + '@mail.ru'\r",
+                  "};\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/users',\r",
+                  "    method: 'POST',\r",
+                  "    header: {'Content-Type': 'application/json'},\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify(user1Data)\r",
+                  "    }\r",
+                  "}, function(err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error('Error creating user 1:', err);\r",
+                  "        return;\r",
+                  "    }\r",
+                  "    \r",
+                  "    console.log('User 1 created, ID:', response.json().id);\r",
+                  "    const user1Id = response.json().id;\r",
+                  "    pm.collectionVariables.set('bookings_user1_id', response.json().id);\r",
+                  "    \r",
+                  "    // 2. Создаем второго пользователя\r",
+                  "    const user2Data = {\r",
+                  "        name: 'testuser2', \r",
+                  "        password: 'testpass2',\r",
+                  "        description: 'I am user 2',\r",
+                  "        email: 'user2_' + Date.now() + '@mail.ru'\r",
+                  "    };\r",
+                  "    \r",
+                  "    pm.sendRequest({\r",
+                  "        url: 'http://localhost:8080/users',\r",
+                  "        method: 'POST',\r",
+                  "        header: {'Content-Type': 'application/json'},\r",
+                  "        body: {\r",
+                  "            mode: 'raw',\r",
+                  "            raw: JSON.stringify(user2Data)\r",
+                  "        }\r",
+                  "    }, function(err, response) {\r",
+                  "        if (err) {\r",
+                  "            console.error('Error creating user 2:', err);\r",
+                  "            return;\r",
+                  "        }\r",
+                  "        \r",
+                  "        console.log('User 2 created, ID:', response.json().id);\r",
+                  "        const user2Id = response.json().id;\r",
+                  "        pm.collectionVariables.set('bookings_user2_id', response.json().id);\r",
+                  "        \r",
+                  "        // 3. Создаем предмет\r",
+                  "        const itemData = {\r",
+                  "            name: 'фен',\r",
+                  "            description: 'жоский фен для волос',\r",
+                  "            pricePerDay: 200\r",
+                  "        };\r",
+                  "        \r",
+                  "        pm.sendRequest({\r",
+                  "            url: 'http://localhost:8080/items',\r",
+                  "            method: 'POST',\r",
+                  "            header: {\r",
+                  "                'Content-Type': 'application/json',\r",
+                  "                'X-User-Id': user1Id.toString()  // Явно преобразуем в строку\r",
+                  "            },\r",
+                  "            body: {\r",
+                  "                mode: 'raw',\r",
+                  "                raw: JSON.stringify(itemData)\r",
+                  "            }\r",
+                  "        }, function(err, response) {\r",
+                  "            if (err) {\r",
+                  "                console.error('Error creating item:', err);\r",
+                  "                return;\r",
+                  "            }\r",
+                  "            \r",
+                  "            console.log('Item created, ID:', response.json().id);\r",
+                  "            pm.collectionVariables.set('bookings_item1_id', response.json().id);\r",
+                  "            console.log('All done!');\r",
+                  "        });\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking created successfully\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Booking data in response\", function() {\r",
+                  "    const response = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(response.id).is.not.null;\r",
+                  "    pm.expect(response.startDate).to.equal(\"2023-11-26\");\r",
+                  "    pm.expect(response.endDate).to.equal(\"2023-11-27\");\r",
+                  "    pm.expect(response.itemId).is.not.null;\r",
+                  "    pm.expect(response.bookerId).is.not.null;\r",
+                  "    pm.expect(response.createdAt).is.not.null;\r",
+                  "    pm.expect(response.status).is.equal(\"WAITING\")\r",
+                  "    pm.expect(response.verifiedAt).is.null;\r",
+                  "});\r",
+                  "\r",
+                  "// Сохраняем ID для других запросов\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.collectionVariables.set(\"booking_id\", response.id);\r",
+                  "    console.log(\"Created item ID:\", response.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user2_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"startDate\": \"2023-11-26\",\r\n    \"endDate\": \"2023-11-27\",\r\n    \"itemId\": {{bookings_item1_id}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/bookings",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update_booking_status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\" : \"ACCEPT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/bookings/{{booking_id}}/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "{{booking_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update_booking_dates",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user2_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"startDate\": \"2023-11-24\",\r\n    \"endDate\": \"2023-11-26\",\r\n    \"itemId\": {{bookings_item1_id}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/bookings/{{booking_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "{{booking_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_booking",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/bookings/{{booking_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "{{booking_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_user_booking",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user2_id}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/bookings/my",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "my"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_owner_booking",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/bookings/owners",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "owners"
+              ],
+              "query": [
+                {
+                  "key": "X-User-Id",
+                  "value": "{{bookings_user1_id}}",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_booking",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/bookings/{{booking_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "bookings",
+                "{{booking_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "comments",
+      "item": [
+        {
+          "name": "create_comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// 1. Создаем первого пользователя\r",
+                  "const user1Data = {\r",
+                  "    name: 'testuser1',\r",
+                  "    password: 'testpass1',\r",
+                  "    description: 'I am user 1',\r",
+                  "    email: 'user1_' + Date.now() + '@mail.ru'\r",
+                  "};\r",
+                  "\r",
+                  "pm.sendRequest({\r",
+                  "    url: 'http://localhost:8080/users',\r",
+                  "    method: 'POST',\r",
+                  "    header: {'Content-Type': 'application/json'},\r",
+                  "    body: {\r",
+                  "        mode: 'raw',\r",
+                  "        raw: JSON.stringify(user1Data)\r",
+                  "    }\r",
+                  "}, function(err, response) {\r",
+                  "    if (err) {\r",
+                  "        console.error('Error creating user 1:', err);\r",
+                  "        return;\r",
+                  "    }\r",
+                  "    \r",
+                  "    console.log('User 1 created, ID:', response.json().id);\r",
+                  "    const user1Id = response.json().id;\r",
+                  "    pm.collectionVariables.set('comments_user1_id', response.json().id);\r",
+                  "    \r",
+                  "    // 2. Создаем второго пользователя\r",
+                  "    const user2Data = {\r",
+                  "        name: 'testuser2', \r",
+                  "        password: 'testpass2',\r",
+                  "        description: 'I am user 2',\r",
+                  "        email: 'user2_' + Date.now() + '@mail.ru'\r",
+                  "    };\r",
+                  "    \r",
+                  "    pm.sendRequest({\r",
+                  "        url: 'http://localhost:8080/users',\r",
+                  "        method: 'POST',\r",
+                  "        header: {'Content-Type': 'application/json'},\r",
+                  "        body: {\r",
+                  "            mode: 'raw',\r",
+                  "            raw: JSON.stringify(user2Data)\r",
+                  "        }\r",
+                  "    }, function(err, response) {\r",
+                  "        if (err) {\r",
+                  "            console.error('Error creating user 2:', err);\r",
+                  "            return;\r",
+                  "        }\r",
+                  "        \r",
+                  "        console.log('User 2 created, ID:', response.json().id);\r",
+                  "        const user2Id = response.json().id;\r",
+                  "        pm.collectionVariables.set('comments_user2_id', response.json().id);\r",
+                  "        \r",
+                  "        // 3. Создаем предмет\r",
+                  "        const itemData = {\r",
+                  "            name: 'фен',\r",
+                  "            description: 'жоский фен для волос',\r",
+                  "            pricePerDay: 200\r",
+                  "        };\r",
+                  "        \r",
+                  "        pm.sendRequest({\r",
+                  "            url: 'http://localhost:8080/items',\r",
+                  "            method: 'POST',\r",
+                  "            header: {\r",
+                  "                'Content-Type': 'application/json',\r",
+                  "                'X-User-Id': user1Id.toString()  // Явно преобразуем в строку\r",
+                  "            },\r",
+                  "            body: {\r",
+                  "                mode: 'raw',\r",
+                  "                raw: JSON.stringify(itemData)\r",
+                  "            }\r",
+                  "        }, function(err, response) {\r",
+                  "            if (err) {\r",
+                  "                console.error('Error creating item:', err);\r",
+                  "                return;\r",
+                  "            }\r",
+                  "            \r",
+                  "            console.log('Item created, ID:', response.json().id);\r",
+                  "            const itemId = response.json().id;\r",
+                  "            pm.collectionVariables.set('comments_item1_id', response.json().id);\r",
+                  "\r",
+                  "            // 3. Создаем предмет\r",
+                  "            const bookingData = {\r",
+                  "                \"startDate\": \"2023-11-26\",\r",
+                  "                \"endDate\": \"2023-11-27\",\r",
+                  "                \"itemId\": itemId\r",
+                  "            };\r",
+                  "\r",
+                  "            pm.sendRequest({\r",
+                  "                url: 'http://localhost:8080/bookings',\r",
+                  "                method: 'POST',\r",
+                  "                header: {\r",
+                  "                    'Content-Type': 'application/json',\r",
+                  "                    'X-User-Id': user1Id.toString()  // Явно преобразуем в строку\r",
+                  "                },\r",
+                  "                body: {\r",
+                  "                    mode: 'raw',\r",
+                  "                    raw: JSON.stringify(bookingData)\r",
+                  "                }\r",
+                  "            }, function(err, response) {\r",
+                  "                if (err) {\r",
+                  "                    console.error('Error creating item:', err);\r",
+                  "                    return;\r",
+                  "                }\r",
+                  "                \r",
+                  "                console.log('Item created, ID:', response.json().id);\r",
+                  "                pm.collectionVariables.set('comments_booking1_id', response.json().id);\r",
+                  "            });\r",
+                  "        });\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking created successfully\", function () {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Booking data in response\", function() {\r",
+                  "    const response = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(response.id).is.not.null;\r",
+                  "    pm.expect(response.userId).is.not.null;\r",
+                  "    pm.expect(response.itemId).is.not.null;\r",
+                  "    pm.expect(response.bookingId).is.not.null;\r",
+                  "    pm.expect(response.text).is.not.null;\r",
+                  "});\r",
+                  "\r",
+                  "// Сохраняем ID для других запросов\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const response = pm.response.json();\r",
+                  "    pm.collectionVariables.set(\"comment_id\", response.id);\r",
+                  "    console.log(\"Created comment ID:\", response.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"itemId\": {{comments_item1_id}},\r\n    \"bookingId\": {{comments_booking1_id}},\r\n    \"text\": \"отлично работает, буду пользоваться дальше\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/comments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_comment_neg",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking created successfully\", function () {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user2_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/comments/{{comment_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "comments",
+                "{{comment_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_item_comments",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking created successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{bookings_item1_id}}/comments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{bookings_item1_id}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_comment",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Booking created successfully\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{bookings_user1_id}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/comments/{{comment_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "comments",
+                "{{comment_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "user_photos",
+      "item": [
+        {
+          "name": "upload_file",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{base_user_token}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "src": "/C:/Users/Danila/Pictures/Screenshots/Снимок экрана 2025-08-12 093141.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "download_file",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_file",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/users/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "users",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "item_photos",
+      "item": [
+        {
+          "name": "upload_item_photo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{base_user_token}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "src": "/C:/Users/Danila/Pictures/Screenshots/Снимок экрана 2025-08-18 135238.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{created_item_id}}/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{created_item_id}}",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "download_item_photo",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{created_item_id}}/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{created_item_id}}",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_item_photo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{base_user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "photo",
+                  "description": "file",
+                  "type": "file",
+                  "uuid": "423d9f99-3fd4-4f84-aee1-632da220947a",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:8080/items/{{created_item_id}}/files",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "items",
+                "{{created_item_id}}",
+                "files"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "created_user_id",
+      "value": ""
+    },
+    {
+      "key": "items_user_id",
+      "value": ""
+    },
+    {
+      "key": "created_item_id",
+      "value": ""
+    },
+    {
+      "key": "items_user2_id",
+      "value": ""
+    },
+    {
+      "key": "bookings_user1_id",
+      "value": ""
+    },
+    {
+      "key": "bookings_user2_id",
+      "value": ""
+    },
+    {
+      "key": "bookings_item1_id",
+      "value": ""
+    },
+    {
+      "key": "booking_id",
+      "value": ""
+    },
+    {
+      "key": "comments_user1_id",
+      "value": ""
+    },
+    {
+      "key": "comments_user2_id",
+      "value": ""
+    },
+    {
+      "key": "comments_item1_id",
+      "value": ""
+    },
+    {
+      "key": "comments_booking1_id",
+      "value": ""
+    },
+    {
+      "key": "comment_id",
+      "value": ""
+    },
+    {
+      "key": "base_user_token",
+      "value": ""
+    },
+    {
+      "key": "item_id",
+      "value": ""
+    }
+  ]
+}
